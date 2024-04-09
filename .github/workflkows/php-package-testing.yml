@@ -1,0 +1,33 @@
+name: PHP Package Tests
+on:
+  workflow_call:
+    inputs:
+      php-version:
+        description: 'PHP version'
+        required: false
+        default: '8.3'
+        type: string
+      php-extensions:
+        description: 'PHP extensions'
+        required: false
+        type: string
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ inputs.php-version }}
+          extensions: ${{ inputs.php-extensions }}
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      - name: Run tests
+        run: composer run-tests

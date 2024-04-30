@@ -1,0 +1,24 @@
+name: PHP Service Tests
+on:
+  workflow_call:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      COMPOSER_AUTH: '{"github-oauth":{"github.com":"${{ secrets.COMPOSER_AUTH }}"},"github-protocols":["https"]}'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup npmrc
+        run: echo "//registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}" >> .npmrc
+
+      - name: Install yarn dependencies
+        run: yarn install
+        
+      - name: Spin up dev container
+        run: yarn start:dev
+
+      - name: Run unit tests
+        run: yarn test:unit
